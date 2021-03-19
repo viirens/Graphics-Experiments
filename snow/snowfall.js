@@ -14,9 +14,20 @@ let dialogue = [
   ],
   ["hi..", "this", "should", "work"],
 ];
+let dialogueKey = [];
+let dialogueCode = {};
 let currState = 0;
 let isTyping = false;
 let page = 0;
+
+// dialogueCode = {2:true, 5:true};
+// //dialogue settings, maybe temporary solution 4 anim. behavior
+// for (i = 0; i < dialogue[0].length; i++) {
+//     if (i = true) dialogueCode = true;
+//     else dialogueKey[i] = false;
+// }
+
+// console.log(dialogueKey);
 
 function setup() {
   c = createCanvas(windowWidth, windowHeight);
@@ -35,7 +46,7 @@ function draw() {
   background(200, 220, 255);
   strokeWeight(0);
   textSize(14);
-  text(currState + "-" + frame + "-" + page, 20, height - 30, width / 5, 100);
+  text(currState + "-" + isTyping, 20, height - 30, width / 5, 100);
 }
 
 let snow = [];
@@ -115,9 +126,6 @@ let txt = "";
 //typewriter animation
 function typeWriter() {
   let chatWindow = document.getElementById("dialogBox");
-  //   if (isTyping != true && i == txt.length) {
-  //     chatWindow.innerHTML += "<br><br><br>";
-  //   }
 
   if (i < txt.length) {
     chatWindow.innerHTML = chatWindow.innerHTML.slice(0, -1);
@@ -125,26 +133,23 @@ function typeWriter() {
     i++;
     setTimeout(typeWriter, speed, (isTyping = true));
     //skip txt animation mechanic
+    //ENTER key simulation
     if (i == txt.length) {
       isTyping = false;
       speed = intlSpd;
       //call cursor blink function only once per "frame"
       if (currState == 1) setInterval(cursorBlink, 420);
-      //   chatWindow.innerHTML += "<br><br>";
+      //   make cursor into span object to animate
+      console.log("hi" + chatWindow.innerHTML);
+      chatWindow.innerHTML += " <span class=br></span>";
+      let avno = chatWindow.innerHTML;
+      let avn = avno.slice(0, -26) + avno.slice(-25);
+      chatWindow.innerHTML = avn + "<span id=cursor>█</span>";
+      //   setTimeout(() => {
+      //     chatWindow.innerHTML += " <span class=br></span>";
+      //   }, 600);
     }
   }
-
-  //   make cursor into span object to animate
-  let avno = $("#dialogBox").text();
-  console.log("hi" + avno);
-  if (isTyping != true) {
-    let avn = avno.slice(0, avno.length - 1);
-    //this line
-    chatWindow.innerHTML = avn + "<span id=cursor>█</span>";
-  }
-
-  console.log(document.getElementById("dialogBox").innerHTML);
-
   var xH = chatWindow.scrollHeight;
   chatWindow.scrollTo(0, xH);
 }
