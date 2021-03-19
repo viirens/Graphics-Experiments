@@ -1,10 +1,10 @@
 //how to modularly integrate dialogue?
 let dialogue = [
   [
-    "The lighting in a ruin can often be quite flattering.",
-    "The nice thing about a home in ruin",
+    "Novalis: The lighting in a ruin can often be quite flattering.",
+    "Novalis: The nice thing about a home in ruin",
     "is that the light can get in.",
-    "And how great that, when you’re about to cross the threshold to leave,",
+    "And how great that, when you’re about to cross the threshold to leave",
     "you know you’ve not forgotten anything behind you.",
     "The lighting in a ruin can often be quite flattering.",
     "The nice thing about a home in ruin",
@@ -15,7 +15,8 @@ let dialogue = [
   ["hi..", "this", "should", "work"],
 ];
 let dialogueKey = [];
-let dialogueCode = {};
+//index listed will skip line animation
+let dialogueCode0 = [[1, 5], []];
 let currState = 0;
 let isTyping = false;
 let page = 0;
@@ -46,7 +47,13 @@ function draw() {
   background(200, 220, 255);
   strokeWeight(0);
   textSize(14);
-  text(currState + "-" + isTyping, 20, height - 30, width / 5, 100);
+  text(
+    currState + "-" + isTyping + "-" + isBusy,
+    20,
+    height - 30,
+    width / 5,
+    100
+  );
 }
 
 let snow = [];
@@ -86,7 +93,7 @@ function keyPressed() {
   //     else currImg = 0;
 
   //cap iterations to length of dialogue array and iterate
-  if (keyCode === RIGHT_ARROW && isTyping != true) {
+  if (keyCode === RIGHT_ARROW && isTyping != true && isBusy != true) {
     if (currState >= dialogue[frame].length) currState = dialogue[frame].length;
     else currState++;
   }
@@ -94,11 +101,13 @@ function keyPressed() {
   if (isTyping == true && keyCode === RIGHT_ARROW) {
     speed = 0;
   }
+
   //append text to same paragraph (additive text)
   if (
     currState < dialogue[frame].length &&
     keyCode === RIGHT_ARROW &&
-    isTyping != true
+    isTyping != true &&
+    isBusy != true
   ) {
     txt += dialogue[frame][currState] + " ";
     typeWriter();
@@ -122,6 +131,7 @@ let i = 0;
 let intlSpd = 40;
 let speed = intlSpd;
 let txt = "";
+let isBusy = false;
 
 //typewriter animation
 function typeWriter() {
@@ -132,6 +142,12 @@ function typeWriter() {
     chatWindow.innerHTML += txt.charAt(i - 1) + "█";
     i++;
     setTimeout(typeWriter, speed, (isTyping = true));
+    //get currString len
+    let currLength = dialogue[0][currState].length;
+    let enterDelay = currLength * 12;
+    enterDelay = Math.min(enterDelay, 1500);
+    enterDelay = Math.max(enterDelay, 620);
+
     //skip txt animation mechanic
     //ENTER key simulation
     if (i == txt.length) {
@@ -140,18 +156,27 @@ function typeWriter() {
       //call cursor blink function only once per "frame"
       if (currState == 1) setInterval(cursorBlink, 420);
       //   make cursor into span object to animate
-      console.log("hi" + chatWindow.innerHTML);
-      chatWindow.innerHTML += " <span class=br></span>";
       let avno = chatWindow.innerHTML;
-      let avn = avno.slice(0, -26) + avno.slice(-25);
+      let avn = avno.slice(0, -1);
       chatWindow.innerHTML = avn + "<span id=cursor>█</span>";
-      //   setTimeout(() => {
-      //     chatWindow.innerHTML += " <span class=br></span>";
-      //   }, 600);
+
+      //pause before ENTER effect
+      if (!dialogueCode0[frame].includes(currState)) {
+        isBusy = true;
+
+        setTimeout(() => {
+          chatWindow.innerHTML += "<span class=br></span>";
+          let avno = chatWindow.innerHTML;
+          let avn = avno.slice(0, -70) + avno.slice(-24);
+          chatWindow.innerHTML = avn + "<span id=cursor>█</span>";
+          isBusy = false;
+          //keep chatWindow at bottom while reading
+          chatWindow.scrollTo(0, chatWindow.scrollHeight);
+        }, enterDelay);
+      }
     }
   }
-  var xH = chatWindow.scrollHeight;
-  chatWindow.scrollTo(0, xH);
+  chatWindow.scrollTo(0, chatWindow.scrollHeight);
 }
 
 let cursor2 = true;
