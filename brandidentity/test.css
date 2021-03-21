@@ -1,17 +1,17 @@
 html {
-    min-height: 100%;
-    width: 100%;
-    overflow: hidden;
+  height: 100%;
+  width: 100%;
 }
 
 body {
-    min-height: 100vh;
-    max-width: 100%;
+  margin: 0 auto;
+  min-height: 100%;
+  max-width: 100%;
 }
 
-#canvasWrapper {
+/* #canvasWrapper {
     width: 100%;
-    min-height: 100vh;
+    height: 80%;
     margin: 0 auto;
 
-}
+} */
